@@ -16,7 +16,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     //ham xu ly request truoc khi den controller, false chan request, true tiep tuc xu ly
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // Nếu là preflight request (OPTIONS) thì cho qua
+        // Nếu là preflight request (OPTIONS) thì cho qua -> lỗi về CORS preflight
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
             return true;
@@ -24,7 +24,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         String token = request.getHeader("Authorization");//lay token tu request header
         //Xử lý sai định dạng token từ header Authorization
         //token có dạng như sau: (Authorization: Bearer eyJhbGciOiJIUzI1NiIsIn...)
-        if (token == null|| !token.startsWith("Bearer ") ) {
+        if (token == null || !token.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Access Denied ! Co the sai dinh dang token");
             return false;
@@ -42,7 +42,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         //Phân quyền theo role phai la 'admin' moi duoc truy cap
         String requestURI = request.getRequestURI();
         String role = jwtUtils.getRoleFromToken(token);
-        if (    ("/employees/list".equals(requestURI) && !"admin".equals(role))||
+        if (("/employees/list".equals(requestURI) && !"admin".equals(role)) ||
                 ("/employees/102".equals(requestURI) && !"user".equals(role))
         ) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
