@@ -8,8 +8,8 @@ import java.util.List;
 
 @Service
 public class EmployeeService {
+    //inject
     private final EmployeeRepository employeeRepository;
-
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }

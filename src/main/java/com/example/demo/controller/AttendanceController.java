@@ -1,0 +1,43 @@
+package com.example.demo.controller;
+import com.example.demo.entity.Attendance;
+import com.example.demo.service.AttendanceService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+// 3 import xử lý phần catch của getAttendanceByDate
+import java.time.format.DateTimeParseException;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+
+@RestController
+@RequestMapping("/attendances")
+@CrossOrigin(origins = "http://localhost:5173")
+public class AttendanceController {
+    private final AttendanceService attendanceService;
+    public AttendanceController(AttendanceService attendanceService) {
+        this.attendanceService = attendanceService;
+    }
+    // có lẽ không dùng api này
+    @GetMapping("/list1")
+    public ResponseEntity<List<Attendance>> getTodayAttendance() {
+        List<Attendance> attendanceListToday = attendanceService.getTodayAttendance();
+        return ResponseEntity.ok(attendanceListToday);
+    }
+
+    @GetMapping("/list")
+    public List<Attendance> getAttendanceByDate(@RequestParam(required = false) String date) {
+        LocalDate targetDate;
+        try {
+            targetDate = (date != null) ? LocalDate.parse(date) : LocalDate.now();
+        } catch (DateTimeParseException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid date format. Expected yyyy-MM-dd"
+            );
+        }
+
+        return attendanceService.getAttendanceByDate(targetDate);
+    }
+}

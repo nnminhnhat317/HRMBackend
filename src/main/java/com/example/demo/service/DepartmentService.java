@@ -9,11 +9,12 @@ import java.util.List;
 
 @Service
 public class DepartmentService {
+    //inject
     private final DepartmentRepository deparmentRepository;
-
     public DepartmentService(DepartmentRepository employeeRepository) {
         this.deparmentRepository = employeeRepository;
     }
+
     public List<Department> getAllDepartments() {
         return deparmentRepository.findAll();
     }
