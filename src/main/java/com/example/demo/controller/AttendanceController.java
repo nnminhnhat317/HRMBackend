@@ -26,6 +26,7 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceListToday);
     }
 
+    //Attendance
     @GetMapping("/list")
     public List<Attendance> getAttendanceByDate(@RequestParam(required = false) String date) {
         LocalDate targetDate;
@@ -39,5 +40,16 @@ public class AttendanceController {
         }
 
         return attendanceService.getAttendanceByDate(targetDate);
+    }
+
+    //AttendanceDetail
+    @GetMapping("/detail")
+    public ResponseEntity<List<Attendance>> getAttendanceByEmployeeAndMonth(
+            @RequestParam Integer employeeId,
+            @RequestParam int month,
+            @RequestParam int year
+    ) {
+        List<Attendance> attendances = attendanceService.getAttendanceByEmployeeAndMonth(employeeId, month, year);
+        return ResponseEntity.ok(attendances);
     }
 }

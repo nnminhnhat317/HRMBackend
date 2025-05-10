@@ -23,7 +23,7 @@ public class AttendanceService {
         this.employeeRepository = employeeRepository;
     }
 
-    // Lấy lịch sử chấm công của nhân viên
+    // Lấy lịch sử chấm công của nhân viên (không sử dụng)
     public List<Attendance> getAttendanceHistory(Integer employeeId) {
         return attendanceRepository.findByEmployeeId(employeeId);
     }
@@ -53,7 +53,7 @@ public class AttendanceService {
 
         return attendances;
     }
-
+    //attendance
     public List<Attendance> getAttendanceByDate (LocalDate selectedDate) {
         List<Employee> employees = employeeRepository.findAll();
         List<Attendance> attendances = new ArrayList<>();
@@ -73,5 +73,40 @@ public class AttendanceService {
         }
 
         return attendances;
+    }
+
+    //attendanceDetail
+    public List<Attendance> getAttendanceByEmployeeAndMonth(Integer employeeId, int month, int year) {
+        List<Attendance> result = new ArrayList<>();
+
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        // Lấy employee 1 lần
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        // Lấy danh sách chấm công thực tế trong tháng
+        List<Attendance> attendanceList = attendanceRepository.findByEmployeeIdAndDateBetween(
+                employeeId, startDate, endDate
+        );
+
+        Map<LocalDate, Attendance> attendanceMap = attendanceList.stream()
+                .collect(Collectors.toMap(Attendance::getDate, a -> a));
+
+        // Duyệt từng ngày trong tháng, điền dữ liệu nếu có, nếu không thì tạo bản ghi rỗng
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            Attendance attendance = attendanceMap.getOrDefault(date, createEmptyAttendance(employee, date));
+            result.add(attendance);
+        }
+
+        return result;
+    }
+    private Attendance createEmptyAttendance(Employee employee, LocalDate date) {
+        Attendance empty = new Attendance();
+        empty.setEmployee(employee);
+        empty.setDate(date);
+        // Có thể set status mặc định như "CHUA_CHAM_CONG"
+        return empty;
     }
 }
