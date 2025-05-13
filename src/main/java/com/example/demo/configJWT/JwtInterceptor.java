@@ -42,8 +42,8 @@ public class JwtInterceptor implements HandlerInterceptor {
         //Phân quyền theo role phai la 'admin' moi duoc truy cap
         String requestURI = request.getRequestURI();
         String role = jwtUtils.getRoleFromToken(token);
-        if (("/employees/list".equals(requestURI) && !"admin".equals(role)) ||
-                ("/employees/102".equals(requestURI) && !"user".equals(role))
+        if (("/employees/list".equals(requestURI) && !"admin".equals(role))
+//                ||("/employees/102".equals(requestURI) && !"user".equals(role))
         ) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write("Wrong role, Access Denied!");

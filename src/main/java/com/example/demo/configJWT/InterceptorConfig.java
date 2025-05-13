@@ -13,14 +13,14 @@ public class InterceptorConfig implements WebMvcConfigurer {
     }
 
     //Kiem tra JWT của request dua vao role user
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(jwtInterceptor)
-//                // Xác thực JWT cho API cần bảo vệ (chỉ cần có token là truy cập đc)
-//                // Để phân quyền role cụ thể thì cấu hình trong file JwtInterceptor
-//                .addPathPatterns("/employees/list","/employees/102")
-//                // Không xác thưc JWT cho login, register, empl id 101
-//                .excludePathPatterns("/auth/**","/employees/101");
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(jwtInterceptor)
+                // -Xác thực JWT cho API cần bảo vệ (chỉ cần có token là truy cập đc)
+                // -Còn để phân quyền role cụ thể thì cấu hình trong file JwtInterceptor
+                .addPathPatterns("/employees/list")
+                // Không xác thưc JWT cho login, register, empl id 101
+                .excludePathPatterns("/auth/**");
+    }
 
 }
