@@ -1,5 +1,6 @@
 package com.example.demo.configJWT;
 
+import com.example.demo.entity.Employee;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,10 +22,11 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY)); // Giải mã Base64 trước khi tạo key
     }
     // Tạo token gồm username và role
-    public String generateToken(String username, String role) {
+    public String generateToken(String username, String role, Integer employeeId) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("role", role) // Thêm role vào JWT
+                .claim("employeeId", employeeId)
                 .setIssuedAt(new Date()) // Ngày cấp
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) //Ngày hết han
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256) //ký với khao bi mat
@@ -49,6 +51,16 @@ public class JwtUtils {
                 .parseClaimsJws(token)
                 .getBody()
                 .get("role", String.class);
+    }
+
+    // Lấy employeeId từ token, để hiển thị thông tin của nhân viên đó
+    public Long getEmployeeIdFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("employeeId", Long.class);
     }
 
     // Kiểm tra token hợp lệ nếu token hợp lệ (chữ ký đúng, chưa hết hạn) → trả về true.

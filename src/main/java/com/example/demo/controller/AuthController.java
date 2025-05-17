@@ -36,12 +36,13 @@ public class AuthController {
         Users userdb = userRepository.findByUsername(username);
         // so sanh 2 password thong qua bcrypt
         if (userdb != null && passwordEncoder.matches(password, userdb.getPassword())) {
-            String token = jwtUtils.generateToken(userdb.getUsername(), userdb.getRole());//generate token
-
+            //generate token
+            String token = jwtUtils.generateToken(userdb.getUsername(), userdb.getRole(), userdb.getEmployeeId().getId());
             //Trả về JWT token dưới dạng JSON cho client qua reponse
             Map<String, Object> response = new HashMap<>();
             response.put("username", userdb.getUsername());
             response.put("role", userdb.getRole());
+            response.put("employeeId", userdb.getEmployeeId().getId());
             response.put("token", token);
             ResponseEntity.ok().body(response);
             return ResponseEntity.ok().body(response);

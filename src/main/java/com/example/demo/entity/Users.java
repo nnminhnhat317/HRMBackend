@@ -3,7 +3,6 @@ package com.example.demo.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.Set;
 
 @Entity
 @Data
@@ -17,5 +16,7 @@ public class Users {
     private String username;
     private String password;
     private String role;
-
+    @OneToOne
+    @JoinColumn(name="employee_id")
+    private Employee employeeId;
 }

@@ -53,6 +53,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         //lấy thông tin từ token gán vào request, để các controller có thể sử dụng.
         request.setAttribute("username", jwtUtils.getUsernameFromToken(token));
         request.setAttribute("role", jwtUtils.getRoleFromToken(token));
+        request.setAttribute("employeeId", jwtUtils.getEmployeeIdFromToken(token));
         response.setStatus(HttpServletResponse.SC_OK); // tra ve reponse neu thanh cong
         return true;//Nếu token hợp lệ, request tiếp tục được xử lý.
 
