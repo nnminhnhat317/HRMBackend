@@ -15,6 +15,9 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeById(Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Employee ID must not be null");
+        }
         return employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
     }
 
@@ -47,4 +50,5 @@ public class EmployeeService {
         }
         employeeRepository.deleteById(id);
     }
+
 }

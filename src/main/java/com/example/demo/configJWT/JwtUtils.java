@@ -54,13 +54,13 @@ public class JwtUtils {
     }
 
     // Lấy employeeId từ token, để hiển thị thông tin của nhân viên đó
-    public Long getEmployeeIdFromToken(String token) {
+    public Integer getEmployeeIdFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .get("employeeId", Long.class);
+                .get("employeeId", Integer.class);
     }
 
     // Kiểm tra token hợp lệ nếu token hợp lệ (chữ ký đúng, chưa hết hạn) → trả về true.

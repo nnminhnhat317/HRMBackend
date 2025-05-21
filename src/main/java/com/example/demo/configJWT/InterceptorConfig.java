@@ -18,7 +18,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(jwtInterceptor)
                 // -Xác thực JWT cho API cần bảo vệ (chỉ cần có token là truy cập đc)
                 // -Còn để phân quyền role cụ thể thì cấu hình trong file JwtInterceptor
-                .addPathPatterns("/employees/list")
+                .addPathPatterns("/employees/list","/employees/me")
                 // Không xác thưc JWT cho login, register, empl id 101
                 .excludePathPatterns("/auth/**");
     }

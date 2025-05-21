@@ -21,7 +21,9 @@ public class JwtInterceptor implements HandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_OK);
             return true;
         }
-        String token = request.getHeader("Authorization");//lay token tu request header
+        //lay token tu request header được đính kèm tại các api trên frontend
+        String token = request.getHeader("Authorization");
+        System.out.println("Token sau khi request.getHeader() tại prehandle: " + token);
         //Xử lý sai định dạng token từ header Authorization
         //token có dạng như sau: (Authorization: Bearer eyJhbGciOiJIUzI1NiIsIn...)
         if (token == null || !token.startsWith("Bearer ")) {
@@ -54,7 +56,9 @@ public class JwtInterceptor implements HandlerInterceptor {
         request.setAttribute("username", jwtUtils.getUsernameFromToken(token));
         request.setAttribute("role", jwtUtils.getRoleFromToken(token));
         request.setAttribute("employeeId", jwtUtils.getEmployeeIdFromToken(token));
-        response.setStatus(HttpServletResponse.SC_OK); // tra ve reponse neu thanh cong
+        System.out.println("EmployeeId nhận được sau khi giải mã token tại prehandle là: "+jwtUtils.getEmployeeIdFromToken(token));
+        // tra ve reponse neu thanh cong
+//        response.setStatus(HttpServletResponse.SC_OK);
         return true;//Nếu token hợp lệ, request tiếp tục được xử lý.
 
     }

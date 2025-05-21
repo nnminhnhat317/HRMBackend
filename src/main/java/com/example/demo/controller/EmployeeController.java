@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Employee;
 import com.example.demo.service.EmployeeService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class EmployeeController {
     }
 
     private final EmployeeService employeeService;
-
+    //lấy thông tin load lên form trong updateForm Employee của chức năng admin
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Integer id) {
         Employee employee = employeeService.getEmployeeById(id);
@@ -47,5 +48,13 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
         return ResponseEntity.ok("Employee deleted id " + id + " successfully");
     }
-
+    // Chức năng thông tin cá nhân phía user
+    // Tham số HttpServletRequest request cần truyền vào vì nó là nơi lưu trữ các attribute từ Interceptor
+    @GetMapping("/me")
+    public ResponseEntity<Employee> getMyProfile(HttpServletRequest request) {
+        Integer employeeId = (Integer) request.getAttribute("employeeId");
+        System.out.println("EmployeeId nhận được tại Controller sau khi qua prehandle là: "+employeeId);
+        Employee employee = employeeService.getEmployeeById(employeeId);
+        return ResponseEntity.ok(employee);
+    }
 }
