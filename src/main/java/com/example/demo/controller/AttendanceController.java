@@ -52,4 +52,25 @@ public class AttendanceController {
         List<Attendance> attendances = attendanceService.getAttendanceByEmployeeAndMonth(employeeId, month, year);
         return ResponseEntity.ok(attendances);
     }
+    //AttendanceDetail CHUYEN CAN
+    @GetMapping("/isChuyenCan")
+    public ResponseEntity<Boolean> isChuyenCan(
+            @RequestParam Integer employeeId,
+            @RequestParam int month,
+            @RequestParam int year
+    ) {
+        boolean result = attendanceService.isChuyenCan(employeeId, month, year);
+        return ResponseEntity.ok(result);
+    }
+    //AttendanceDetail TONG NGAY CONG
+    @GetMapping("/working-days")
+    public ResponseEntity<Integer> getWorkingDays(
+            @RequestParam Integer employeeId,
+            @RequestParam int month,
+            @RequestParam int year
+    ) {
+        int workingDays = attendanceService.calculateWorkingDays(employeeId, month, year);
+        return ResponseEntity.ok(workingDays);
+    }
+
 }
