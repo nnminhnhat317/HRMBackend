@@ -19,12 +19,6 @@ public class AttendanceController {
     public AttendanceController(AttendanceService attendanceService) {
         this.attendanceService = attendanceService;
     }
-    // có lẽ không dùng api này
-    @GetMapping("/list1")
-    public ResponseEntity<List<Attendance>> getTodayAttendance() {
-        List<Attendance> attendanceListToday = attendanceService.getTodayAttendance();
-        return ResponseEntity.ok(attendanceListToday);
-    }
 
     //Attendance
     @GetMapping("/list")

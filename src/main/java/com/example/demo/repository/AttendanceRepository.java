@@ -10,14 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
-    // Tìm tất cả chấm công của một nhân viên (không sử dụng)
-    List<Attendance> findByEmployeeId(Integer employeeId);
-
     // Tìm chấm công theo ngày và nhân viên (dùng cho check-in, check-out)
     Optional<Attendance> findByEmployeeIdAndDate(Integer employeeId, LocalDate date);
-
-    // Tìm tất cả chấm công trong một ngày
-    List<Attendance> findByDate(LocalDate date);
 
     //Tim kiem danh sách
     List<Attendance> findByEmployeeIdAndDateBetween(Integer employeeId, LocalDate startDate, LocalDate endDate);
