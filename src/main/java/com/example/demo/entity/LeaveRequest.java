@@ -20,6 +20,9 @@ public class LeaveRequest {
     private Employee employee;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Integer dayCount;
+    private Integer paidLeaveDays;
+    private Integer unpaidLeaveDays;
     private String reason;
     private String leaveType;
     private String status;

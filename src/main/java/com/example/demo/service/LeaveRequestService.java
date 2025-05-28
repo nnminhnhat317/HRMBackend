@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Year;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -24,6 +26,14 @@ public class LeaveRequestService {
                 "PENDING", startOfDay, endOfDay
         );
     }
+    // Lấy ngày nghỉ phép còn lại remaining trong 1 năm
+    public Integer getRemainingPaidLeave(Integer employeeId, int year) {
+        // Tính tổng ngày nghỉ phép đã dùng used trong 1 năm
+        Integer used = leaveRequestRepository.sumPaidLeaveDaysInYear(employeeId, year);
+        return 20 - (used != null ? used : 0);
+    }
+    // Khi tạo đơn sẽ tính  toán day_count, paid_leave_days, unpaid_leave_days
+    // Chức năng cho user tạo đơn
 }
 
 

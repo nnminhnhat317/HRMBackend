@@ -46,7 +46,7 @@ public class AttendanceController {
         List<Attendance> attendances = attendanceService.getAttendanceByEmployeeAndMonth(employeeId, month, year);
         return ResponseEntity.ok(attendances);
     }
-    //AttendanceDetail CHUYEN CAN
+    //AttendanceDetail kiem tra co dat CHUYEN CAN
     @GetMapping("/isChuyenCan")
     public ResponseEntity<Boolean> isChuyenCan(
             @RequestParam Integer employeeId,
@@ -56,7 +56,7 @@ public class AttendanceController {
         boolean result = attendanceService.isChuyenCan(employeeId, month, year);
         return ResponseEntity.ok(result);
     }
-    //AttendanceDetail TONG NGAY CONG
+    //AttendanceDetail TONG NGAY CONG tru T7 CN
     @GetMapping("/working-days")
     public ResponseEntity<Integer> getWorkingDays(
             @RequestParam Integer employeeId,

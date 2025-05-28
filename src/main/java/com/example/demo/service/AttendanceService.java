@@ -82,7 +82,7 @@ public class AttendanceService {
 
     // logic tinh CHUYEN CAN, dieu kien dat chuyen can la
     public boolean isChuyenCan(int employeeId, int month, int year) {
-        // Kiểm tra so ngay` co trong thang: 28 hay 29 hay 30 hay 31
+        // Kiểm tra so ngay` co trong thang: 28 hay 29 hay 30 hay 31 ngay
         YearMonth yearMonth = YearMonth.of(year, month);
         int totalDays = yearMonth.lengthOfMonth();
         //Duyệt tung ngay trong 1 thang
