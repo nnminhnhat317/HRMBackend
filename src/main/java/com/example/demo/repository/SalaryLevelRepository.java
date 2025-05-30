@@ -11,5 +11,6 @@ public interface SalaryLevelRepository extends JpaRepository<SalaryLevel, Intege
     List<SalaryLevel> findAllByOrderByEmployeeIdAscStartDateDesc();
     //tim danh sách promote la false
     List<SalaryLevel> findByPromoteFalseAndStartDateBefore(LocalDate date);
-
+    //Lay lich su salarylevel cua 1 nhan vien
+    List<SalaryLevel> findByEmployeeIdOrderByStartDateDesc(Long employeeId);
 }

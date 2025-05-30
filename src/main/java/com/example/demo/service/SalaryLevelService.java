@@ -44,5 +44,8 @@ public class SalaryLevelService {
         }
         salaryLevelRepository.saveAll(listCanPromote);
     }
-    
+    // lay lich su salarylevel cua 1 nhan vien
+    public List<SalaryLevel> getSalaryHistoryByEmployeeId(Long employeeId) {
+        return salaryLevelRepository.findByEmployeeIdOrderByStartDateDesc(employeeId);
+    }
 }

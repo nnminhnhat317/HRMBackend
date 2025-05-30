@@ -17,7 +17,7 @@ public class Employee {
 
     private String firstName;
     private String lastName;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String gender;
     @Column(unique = true)
     private String phone;
@@ -27,5 +27,5 @@ public class Employee {
     @JoinColumn(name="department_id")
     private Department departmentId;
     private String position;
-    private Date hireDate;
+    private LocalDate hireDate;
 }

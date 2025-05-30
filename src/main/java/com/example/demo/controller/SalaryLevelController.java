@@ -3,10 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.entity.SalaryLevel;
 import com.example.demo.service.SalaryLevelService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,5 +21,10 @@ public class SalaryLevelController {
     public ResponseEntity<List<SalaryLevel>> getLatestSalaryLevels() {
         List<SalaryLevel> result = salaryLevelService.getLatestSalaryLevelPerEmployee();
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{employeeId}")
+    public List<SalaryLevel> getSalaryHistoryByEmployeeId(@PathVariable Long employeeId) {
+        return salaryLevelService.getSalaryHistoryByEmployeeId(employeeId);
     }
 }
