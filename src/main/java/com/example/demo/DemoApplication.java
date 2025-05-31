@@ -13,7 +13,7 @@ import java.util.List;
 @EnableScheduling //tu dong cap nhat promote trong salaryLevel
 public class DemoApplication {
 
-
+//ctrl alt L
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 		System.out.println("Hello World!");

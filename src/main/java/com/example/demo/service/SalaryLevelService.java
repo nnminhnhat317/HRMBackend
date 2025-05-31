@@ -1,51 +1,95 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.Employee;
+import com.example.demo.enums.PromoteStatus;
 import com.example.demo.entity.SalaryLevel;
+import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.SalaryLevelRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class SalaryLevelService {
     private final SalaryLevelRepository salaryLevelRepository;
-    public SalaryLevelService(SalaryLevelRepository salaryLevelRepository) {
+    private final EmployeeRepository employeeRepository;
+
+    public SalaryLevelService(SalaryLevelRepository salaryLevelRepository,
+                              EmployeeRepository employeeRepository) {
         this.salaryLevelRepository = salaryLevelRepository;
-    }
-    // lấy ds bậc lương nhân viên dựa theo ngày hiệu lực mới nhất
-    public List<SalaryLevel> getLatestSalaryLevelPerEmployee() {
-        //dựa vào repo sắp xếp startDate lên đầu tiên => chắc chắn chỉ thêm startDate mới nhất
-        List<SalaryLevel> all = salaryLevelRepository.findAllByOrderByEmployeeIdAscStartDateDesc();
-        Map<Integer, SalaryLevel> latestPerEmployee = new LinkedHashMap<>();
-        for (SalaryLevel level : all) {// duyet tung phan tu
-            Integer employeeId = level.getEmployee().getId();// lay ra empId
-            if (!latestPerEmployee.containsKey(employeeId)) {// kiem tra empId có trong mảng chưa
-                latestPerEmployee.put(employeeId, level);// nếu chưa có thì thêm
-            }
-        }
-        return new ArrayList<>(latestPerEmployee.values());//trả về ds mới nhât
+        this.employeeRepository = employeeRepository;
     }
 
-    //ham tu dong cap nhat promote thanh true: chi lay promote false va saveAll de UPDATE vao sql 1 lan
-    @Scheduled(cron = "0 49 22 * * *")
-    public void updatePromotions() {
-        // lay ds Chưa được thăng chức (promote = false)
-        //Và ngày bắt đầu hiệu lực (startDate) đã trước ít nhất 1 năm tính từ thời điểm hiện tại.
-        // VD hôm nay 29/5/25 thì ngày hiệu lực phải là ngày 28/5/25 để promote set TRUE
-        List<SalaryLevel> listCanPromote = salaryLevelRepository
-                .findByPromoteFalseAndStartDateBefore(LocalDate.now().minusYears(1));
-        for (SalaryLevel promote : listCanPromote) {
-            promote.setPromote(true);
+    // lấy ds bậc lương nhân viên dựa theo ngày hiệu lực mới nhất
+    public List<SalaryLevel> getLatestSalaryLevelPerEmployee() {
+        List<Employee> employees = employeeRepository.findAll();
+        List<SalaryLevel> result = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            // Tìm bậc lương mới nhất của nhân viên này (nếu có)
+            Optional<SalaryLevel> optionalLevel  = salaryLevelRepository
+                    .findTopByEmployeeIdOrderByStartDateDesc(employee.getId());
+            SalaryLevel latest = optionalLevel.orElse(null);
+            if (latest != null) {
+                result.add(latest);
+            } else {
+                // Nếu chưa có bậc lương(nhân vien moi them), tạo bản ghi tạm với thông tin nhân viên
+                // Để tương tác và chuyển sang SalaryDetail
+                SalaryLevel emptyLevel = new SalaryLevel();
+                emptyLevel.setEmployee(employee);
+                // Các trường khác có thể để null
+                result.add(emptyLevel);
+            }
         }
-        salaryLevelRepository.saveAll(listCanPromote);
+        return result;
     }
+
     // lay lich su salarylevel cua 1 nhan vien
-    public List<SalaryLevel> getSalaryHistoryByEmployeeId(Long employeeId) {
+    public List<SalaryLevel> getSalaryHistoryByEmployeeId(Integer employeeId) {
         return salaryLevelRepository.findByEmployeeIdOrderByStartDateDesc(employeeId);
+    }
+
+    // them bac luong moi
+    public SalaryLevel addSalaryLevel(Integer employeeId, SalaryLevel salaryLevel) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        // Cập nhật bản ghi cũ "ELIGIBLE" thành "PROMOTED"
+        List<SalaryLevel> previousLevels = salaryLevelRepository
+                .findByEmployeeIdAndPromoteStatus(employeeId, PromoteStatus.ELIGIBLE);
+        for (SalaryLevel oldLevel : previousLevels) {
+            oldLevel.setPromoteStatus(PromoteStatus.PROMOTED);
+        }
+        salaryLevelRepository.saveAll(previousLevels);
+
+        // Thêm bản ghi mới với trạng thái mặc định
+        salaryLevel.setEmployee(employee);
+        salaryLevel.setPromoteStatus(PromoteStatus.NOT_ELIGIBLE);
+        return salaryLevelRepository.save(salaryLevel);
+    }
+    // chạy mỗi ngày lúc 1:00 sáng cập nhật 1 bản ghi mới gần nhất
+    @Scheduled(cron = "0 28 18 * * *")
+    public void updatePromotionStatus() {
+        List<Employee> allEmployees = employeeRepository.findAll();
+
+        for (Employee employee : allEmployees) {
+            // Tìm bản ghi gần nhất (mới nhất) theo ngày startDate
+            Optional<SalaryLevel> latestSalaryLevelOpt = salaryLevelRepository
+                    .findTopByEmployeeIdOrderByStartDateDesc(employee.getId());
+
+            if (latestSalaryLevelOpt.isPresent()) {
+                SalaryLevel level = latestSalaryLevelOpt.get();
+
+                // Nếu chưa đủ điều kiện và ngày bắt đầu đã quá 1 năm
+                if (level.getPromoteStatus() == PromoteStatus.NOT_ELIGIBLE
+                        && level.getStartDate().isBefore(LocalDate.now().minusYears(1))) {
+
+                    level.setPromoteStatus(PromoteStatus.ELIGIBLE);
+                    salaryLevelRepository.save(level);
+                }
+            }
+        }
     }
 }

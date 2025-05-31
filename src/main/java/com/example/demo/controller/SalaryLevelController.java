@@ -24,7 +24,16 @@ public class SalaryLevelController {
     }
 
     @GetMapping("/{employeeId}")
-    public List<SalaryLevel> getSalaryHistoryByEmployeeId(@PathVariable Long employeeId) {
+    public List<SalaryLevel> getSalaryHistoryByEmployeeId(@PathVariable Integer employeeId) {
         return salaryLevelService.getSalaryHistoryByEmployeeId(employeeId);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<SalaryLevel> createSalaryLevel(
+            @RequestParam Integer employeeId,
+            @RequestBody SalaryLevel salaryLevel
+    ) {
+        SalaryLevel created = salaryLevelService.addSalaryLevel(employeeId, salaryLevel);
+        return ResponseEntity.ok(created);
     }
 }

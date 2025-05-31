@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.enums.PromoteStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import jakarta.persistence.Entity;
@@ -17,7 +18,8 @@ public class SalaryLevel {
     private String levelName;
     private Double baseSalary;
     private LocalDate startDate;
-    private Boolean promote;
+    @Enumerated(EnumType.STRING)
+    private PromoteStatus promoteStatus;
     private String note;
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
