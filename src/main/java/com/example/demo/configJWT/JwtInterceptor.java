@@ -42,8 +42,8 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
 
         //Phân quyền theo role phai la 'admin' moi duoc truy cap
-        String requestURI = request.getRequestURI();
-        String role = jwtUtils.getRoleFromToken(token);
+        String requestURI = request.getRequestURI();//api ma` frontend yeu cau truy cap tai controller
+        String role = jwtUtils.getRoleFromToken(token);//token duoc truyen tu frontend
         if (("/employees/list".equals(requestURI) && !"admin".equals(role))
 //                ||("/employees/102".equals(requestURI) && !"user".equals(role))
         ) {

@@ -17,7 +17,7 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Inte
     List<LeaveRequest> findAllByStatusAndCreatedAtBetween(
             String status, LocalDateTime startOfDay, LocalDateTime endOfDay
     );
-    // Tổng số ngày nghỉ có phép đã sử dụng trong năm
+    // Truy vấn JPQL Tổng số ngày nghỉ có phép đã sử dụng trong năm voi status APPROVED
     // :employeeId dấu : là biến liên kết với tham số của method là @Param("employeeId")
     @Query("SELECT SUM(lr.paidLeaveDays) FROM LeaveRequest lr WHERE lr.employee.id = :employeeId " +
             "AND YEAR(lr.startDate) = :year AND lr.status = 'APPROVED'")

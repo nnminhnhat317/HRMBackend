@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Attendance;
 import com.example.demo.entity.Employee;
+import com.example.demo.enums.AttendanceStatus;
 import com.example.demo.repository.AttendanceRepository;
 import com.example.demo.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
@@ -80,7 +81,7 @@ public class AttendanceService {
         return empty;
     }
 
-    // logic tinh CHUYEN CAN, dieu kien dat chuyen can la
+    // logic tinh CHUYEN CAN, dieu kien dat chuyen can la khong nghi ngay nao
     public boolean isChuyenCan(int employeeId, int month, int year) {
         // Kiểm tra so ngay` co trong thang: 28 hay 29 hay 30 hay 31 ngay
         YearMonth yearMonth = YearMonth.of(year, month);
@@ -100,7 +101,9 @@ public class AttendanceService {
             // Không có dữ liệu, hoặc không đủ checkin/checkout → mất chuyên cần
             if (attendanceOpt.isEmpty()
                     || attendanceOpt.get().getCheckInTime() == null
-                    || attendanceOpt.get().getCheckOutTime() == null) {
+                    || attendanceOpt.get().getCheckOutTime() == null
+                    || attendanceOpt.get().getCheckInStatus() == AttendanceStatus.PAID_LEAVE
+            ) {
                 return false;
             }
         }
@@ -108,6 +111,7 @@ public class AttendanceService {
         return true;
     }
     // logic tinh TONG NGAY CONG
+    // duyet tu dau den cuoi thang, bo T7 CN, dieu kien la checkin-checkoutstatus != null
     public int calculateWorkingDays(int employeeId, int month, int year) {
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
@@ -121,6 +125,8 @@ public class AttendanceService {
             if (attendanceOpt.isPresent()) {
                 Attendance attendance = attendanceOpt.get();
                 if (attendance.getCheckInTime() != null && attendance.getCheckOutTime() != null
+                        && attendance.getCheckInStatus() != AttendanceStatus.PAID_LEAVE
+                        && attendance.getCheckOutStatus() != AttendanceStatus.PAID_LEAVE
                 ) {
                     workingDays++; // có đủ công
                 }

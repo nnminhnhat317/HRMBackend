@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.LeaveRequest;
 import com.example.demo.service.LeaveRequestService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,15 +28,22 @@ public class LeaveRequestController {
         return ResponseEntity.ok(todayRequests);
     }
 
-    // lấy số ngày nghỉ phép còn lại trong năm
+    // lấy số ngày nghỉ phép còn lại trong năm nay
     // dùng để Hiển thị trước khi tạo đơn trả về số ngày nghỉ phép còn lại trong năm của nhân viên
-    // dùng để Ẩn/disable option 'Nghỉ phép năm' nếu hết phép
     // dùng để Cảnh báo khi người dùng nhập đơn nhiều hơn số ngày còn lại:
     //ví dụ: "Bạn chỉ còn 2 ngày nghỉ phép. Đơn này sẽ tính 1 ngày không phép."
-
-    @GetMapping("/remaining/{employeeId}")
-    public ResponseEntity<Integer> getRemainingPaidLeave(@PathVariable Integer employeeId) {
+    @GetMapping("/remaining-days")
+    public ResponseEntity<Integer> getRemainingPaidLeave(HttpServletRequest request) {
+        Integer employeeId = (Integer) request.getAttribute("employeeId");
         int remaining = leaveRequestService.getRemainingPaidLeave(employeeId, Year.now().getValue());
         return ResponseEntity.ok(remaining);
+    }
+    // tạo đơn
+    @PostMapping("/create")
+    public ResponseEntity<?> createLeaveRequest(HttpServletRequest request,
+                                                @RequestBody LeaveRequest leaveRequest) {
+        Integer employeeId = (Integer) request.getAttribute("employeeId");
+        LeaveRequest created = leaveRequestService.createLeaveRequest(leaveRequest, employeeId);
+        return ResponseEntity.ok(created);
     }
 }
