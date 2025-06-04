@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.LeaveRequest;
+import com.example.demo.enums.LeaveRequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,12 +16,24 @@ import java.util.Optional;
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Integer> {
     //Lấy tất cả đơn nghỉ chưa duyệt (status = PENDING) theo ngày tạo đơn createAt
     List<LeaveRequest> findAllByStatusAndCreatedAtBetween(
-            String status, LocalDateTime startOfDay, LocalDateTime endOfDay
+            LeaveRequestStatus status, LocalDateTime startOfDay, LocalDateTime endOfDay
     );
+
     // Truy vấn JPQL Tổng số ngày nghỉ có phép đã sử dụng trong năm voi status APPROVED
     // :employeeId dấu : là biến liên kết với tham số của method là @Param("employeeId")
     @Query("SELECT SUM(lr.paidLeaveDays) FROM LeaveRequest lr WHERE lr.employee.id = :employeeId " +
             "AND YEAR(lr.startDate) = :year AND lr.status = 'APPROVED'")
     Integer sumPaidLeaveDaysInYear(@Param("employeeId") Integer employeeId, @Param("year") int year);
+
+    // Truy vấn tổng số ngày nghỉ không phép của nhân viên theo tháng (unpaidLeaveDays)
+    @Query("SELECT COALESCE(SUM(l.unpaidLeaveDays), 0) FROM LeaveRequest l " +
+            "WHERE l.employee.id = :employeeId " +
+            "AND l.status = :status " +
+            "AND l.startDate BETWEEN :start AND :end")
+    int sumUnpaidLeaveDaysByEmployeeIdAndDateRange(@Param("employeeId") int employeeId,
+                                                   @Param("start") LocalDate start,
+                                                   @Param("end") LocalDate end,
+                                                   @Param("status") LeaveRequestStatus status);
+
 }
 

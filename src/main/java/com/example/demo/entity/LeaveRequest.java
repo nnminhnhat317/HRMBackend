@@ -1,8 +1,10 @@
 package com.example.demo.entity;
 
+import com.example.demo.enums.LeaveRequestStatus;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,6 +27,10 @@ public class LeaveRequest {
     private Integer unpaidLeaveDays;
     private String reason;
     private String leaveType;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LeaveRequestStatus status;
+    @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 }

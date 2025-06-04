@@ -38,7 +38,7 @@ public class LeaveRequestController {
         int remaining = leaveRequestService.getRemainingPaidLeave(employeeId, Year.now().getValue());
         return ResponseEntity.ok(remaining);
     }
-    // tạo đơn
+    // User tạo đơn
     @PostMapping("/create")
     public ResponseEntity<?> createLeaveRequest(HttpServletRequest request,
                                                 @RequestBody LeaveRequest leaveRequest) {
@@ -46,4 +46,17 @@ public class LeaveRequestController {
         LeaveRequest created = leaveRequestService.createLeaveRequest(leaveRequest, employeeId);
         return ResponseEntity.ok(created);
     }
+    // Admin duệt đơn, chỉ đổi một trường status của đơn nên dùng @Patch để  tối ưu
+    @PatchMapping("/{id}/approve")
+    public ResponseEntity<?> approveRequest(@PathVariable Integer id) {
+        LeaveRequest updated = leaveRequestService.approveLeaveRequest(id);
+        return ResponseEntity.ok(updated);
+    }
+    // Admin từ chối đơn
+    @PatchMapping("/{id}/reject")
+    public ResponseEntity<?> rejectRequest(@PathVariable Integer id) {
+        LeaveRequest updated = leaveRequestService.rejectLeaveRequest(id);
+        return ResponseEntity.ok(updated);
+    }
+
 }
