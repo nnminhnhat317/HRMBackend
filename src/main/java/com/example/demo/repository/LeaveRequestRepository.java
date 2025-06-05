@@ -29,11 +29,22 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Inte
     @Query("SELECT COALESCE(SUM(l.unpaidLeaveDays), 0) FROM LeaveRequest l " +
             "WHERE l.employee.id = :employeeId " +
             "AND l.status = :status " +
-            "AND l.startDate BETWEEN :start AND :end")
+            "AND l.startDate BETWEEN :startDate AND :endDate")
     int sumUnpaidLeaveDaysByEmployeeIdAndDateRange(@Param("employeeId") int employeeId,
-                                                   @Param("start") LocalDate start,
-                                                   @Param("end") LocalDate end,
+                                                   @Param("startDate") LocalDate startDate,
+                                                   @Param("endDate") LocalDate endDate,
                                                    @Param("status") LeaveRequestStatus status);
 
+    // Truy vấn tổng số ngày nghỉ có phép của nhân viên theo tháng (paidLeaveDays)
+    @Query("SELECT COALESCE(SUM(l.paidLeaveDays), 0) " +
+            "FROM LeaveRequest l " +
+            "WHERE l.employee.id = :employeeId " +
+            "AND l.status = :status " +
+            "AND l.startDate >= :startDate AND l.endDate <= :endDate")
+    int sumPaidLeaveDaysByEmployeeIdAndDateRange(
+            @Param("employeeId") int employeeId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("status") LeaveRequestStatus status);
 }
 

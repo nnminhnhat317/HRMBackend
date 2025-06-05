@@ -77,15 +77,6 @@ public class LeaveRequestService {
         return leaveRequestRepository.save(leaveRequest);
     }
 
-    // Lấy unpaidLeaveDays đe dùng trong Payroll
-    public int getUnpaidLeaveDaysForEmployeeInMonth(int employeeId, int year, int month) {
-        LocalDate start = LocalDate.of(year, month, 1);
-        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
-
-        return leaveRequestRepository
-                .sumUnpaidLeaveDaysByEmployeeIdAndDateRange(employeeId, start, end, LeaveRequestStatus.APPROVED);
-    }
-
     // Admin duyệt đơn
     public LeaveRequest approveLeaveRequest(Integer id) {
         LeaveRequest request = leaveRequestRepository.findById(id)
@@ -111,6 +102,23 @@ public class LeaveRequestService {
         request.setStatus(LeaveRequestStatus.REJECTED);
         return leaveRequestRepository.save(request);
     }
+    // Lấy paidLeaveDays đe dùng trong Payroll
+    public int getPaidLeaveDaysForEmployeeInMonth(int employeeId, int year, int month) {
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        return leaveRequestRepository
+                .sumPaidLeaveDaysByEmployeeIdAndDateRange(employeeId, start, end, LeaveRequestStatus.APPROVED);
+    }
+    // Lấy unpaidLeaveDays đe dùng trong Payroll
+    public int getUnpaidLeaveDaysForEmployeeInMonth(int employeeId, int year, int month) {
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        return leaveRequestRepository
+                .sumUnpaidLeaveDaysByEmployeeIdAndDateRange(employeeId, start, end, LeaveRequestStatus.APPROVED);
+    }
+
 }
 
 

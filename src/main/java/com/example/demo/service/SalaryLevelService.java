@@ -8,6 +8,7 @@ import com.example.demo.repository.SalaryLevelRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -91,5 +92,13 @@ public class SalaryLevelService {
                 }
             }
         }
+    }
+    // lay baseSalary cho PayrollService su dung
+    public Double getBaseSalaryByEmployeeId(Integer employeeId) {
+        Optional<SalaryLevel> optionalLevel = salaryLevelRepository.findTopByEmployeeIdOrderByStartDateDesc(employeeId);
+
+        return salaryLevelRepository.findTopByEmployeeIdOrderByStartDateDesc(employeeId)
+                .map(SalaryLevel::getBaseSalary) // getBaseSalary là Double
+                .orElse(0.0); // Hoặc ném lỗi nếu muốn xử lý chặt chẽ // hoặc throw nếu bạn muốn bắt buộc phải có
     }
 }
