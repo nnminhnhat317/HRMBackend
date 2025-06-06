@@ -47,14 +47,16 @@ public class PayrollService {
                     .findByEmployeeAndMonthAndYear(employee, month, year);
             if (existing.isPresent()) continue;
 
-            // 1. Lấy lương cơ bản mới nhất
+            // 0. Lấy lương cơ bản mới nhất
             Double baseSalary = salaryLevelService
                     .getBaseSalaryByEmployeeId(employee.getId());
 
-            // 2. Số ngày làm việc thực tế
+            // 1. Số ngày làm việc thực tế
             int workingDays = attendanceService
                     .calculateWorkingDays(employee.getId(), month, year);
-
+            // 3. Nghỉ có phép
+            int paidLeaveDays = leaveRequestService
+                    .getPaidLeaveDaysForEmployeeInMonth(employee.getId(), year, month);
             // 3. Nghỉ không phép
             //service nay dat nguoc giá trị year và month
             int unpaidLeaveDays = leaveRequestService
@@ -67,8 +69,12 @@ public class PayrollService {
             // 5. Khấu trừ = mỗi ngày nghỉ không phép trừ lương theo công chuẩn (22 ngày)
             Double deduction = (baseSalary / 22.0) * unpaidLeaveDays;
 
-            // 6. Lương thực nhận
-            Double totalSalary = (baseSalary / 22.0) * workingDays + allowance - deduction;
+            // 6. Lương thực nhận:
+            Double totalSalary = baseSalary + allowance - deduction;
+            // Vì dự án chọn ngày công chuẩn là 22 ngày
+            // + công thức tính lương totalSalary phụ thuộc vào chính xác 22 ngày công chuẩn
+            // Double totalSalary1day = (baseSalary / 22.0) * (workingDays+paidLeaveDays) + allowance - deduction;
+            // + công thức tính lương totalSalary1day bị phụ thuộc chặt chẽ vào lương 1 ngày -> tính toán có thể sai
 
             // 7. Lưu vào payroll
             Payroll payroll = new Payroll();
@@ -78,6 +84,7 @@ public class PayrollService {
             payroll.setYear(year);
             payroll.setBaseSalary(baseSalary);
             payroll.setWorkingDays(workingDays);
+            payroll.setPaidLeaveDays(paidLeaveDays);
             payroll.setUnpaidLeaveDays(unpaidLeaveDays);
             payroll.setAllowance(allowance);
             payroll.setDeduction(deduction);

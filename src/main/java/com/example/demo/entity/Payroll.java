@@ -23,6 +23,7 @@ public class Payroll {
     private int year;
     private Double baseSalary;
     private int workingDays;
+    private int paidLeaveDays;
     private int unpaidLeaveDays;
     private Double allowance;
     private Double deduction;
