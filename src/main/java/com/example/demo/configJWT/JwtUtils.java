@@ -16,7 +16,7 @@ public class JwtUtils {
     private String SECRET_KEY ; // secret key 32bit
 
 //    private final long EXPIRATION_TIME = 86400000; // 1 ngày
-    private final long EXPIRATION_TIME = 1800000; //30 phut, 1000=1s
+    private final long EXPIRATION_TIME = 3600000; //60phutx60sx1000donvi = 60 phut, (vi 1s=1000donvi)
 //    Chuyển chuỗi SECRET_KEY thành một Key object để ký JWT bằng thuật toán HMAC SHA-256
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY)); // Giải mã Base64 trước khi tạo key

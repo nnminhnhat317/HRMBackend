@@ -72,7 +72,8 @@ public class PayrollService {
             // 6. Lương thực nhận:
             Double totalSalary = baseSalary + allowance - deduction;
             // Vì dự án chọn ngày công chuẩn là 22 ngày
-            // + công thức tính lương totalSalary phụ thuộc vào chính xác 22 ngày công chuẩn
+            // + công thức tính lương totalSalary phải phụ thuộc vào chính xác 22 ngày công chuẩn
+
             // Double totalSalary1day = (baseSalary / 22.0) * (workingDays+paidLeaveDays) + allowance - deduction;
             // + công thức tính lương totalSalary1day bị phụ thuộc chặt chẽ vào lương 1 ngày -> tính toán có thể sai
 

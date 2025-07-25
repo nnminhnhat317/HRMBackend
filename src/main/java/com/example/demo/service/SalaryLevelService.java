@@ -71,7 +71,7 @@ public class SalaryLevelService {
         return salaryLevelRepository.save(salaryLevel);
     }
     // chạy mỗi ngày lúc 1:00 sáng cập nhật 1 bản ghi mới gần nhất
-    @Scheduled(cron = "0 28 18 * * *")
+    @Scheduled(cron = "0 55 13 * * *")
     public void updatePromotionStatus() {
         List<Employee> allEmployees = employeeRepository.findAll();
 

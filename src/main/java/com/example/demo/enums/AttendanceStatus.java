@@ -5,4 +5,5 @@ public enum AttendanceStatus {
     LATE,//tre
     EARLY_LEAVE,//ve som
     PAID_LEAVE, // nghỉ phép có lương
+    UNPAID_LEAVE
 }

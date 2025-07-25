@@ -117,13 +117,14 @@ public class AttendanceService {
         LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
         int workingDays = 0;
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-            // Nếu muốn bỏ qua thứ 7 & CN
+            // Bỏ qua thứ 7 & CN
             if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
                 continue;
             }
             Optional<Attendance> attendanceOpt = attendanceRepository.findByEmployeeIdAndDate(employeeId, date);
             if (attendanceOpt.isPresent()) {
                 Attendance attendance = attendanceOpt.get();
+                // trạng thái PAID_LEAVE sẽ kh trư công
                 if (attendance.getCheckInTime() != null && attendance.getCheckOutTime() != null
                         && attendance.getCheckInStatus() != AttendanceStatus.PAID_LEAVE
                         && attendance.getCheckOutStatus() != AttendanceStatus.PAID_LEAVE

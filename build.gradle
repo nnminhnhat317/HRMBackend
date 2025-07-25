@@ -44,6 +44,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	//cập nhật thư viện gì đó, và có vẻ khiến jboss logging đã bị gỡ khiến app lỗi->cài lại.
 	implementation 'org.jboss.logging:jboss-logging:3.5.0.Final'
+
 }
 
 tasks.named('test') {
